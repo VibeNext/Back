@@ -1,5 +1,16 @@
 from .base import *
+import environ
 
-DEBUG = True
-# 개발에서는 비워도 되고, 필요시 로컬 추가
-ALLOWED_HOSTS = []
+environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.dev'))
+
+DATABASES = {
+    'default': env.db(),
+}
+
+CACHES = {
+    'default': env.cache(),
+}
+
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+
+CORS_ORIGIN_ALLOW_ALL = True
