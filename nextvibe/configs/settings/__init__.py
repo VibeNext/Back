@@ -1,8 +1,6 @@
-# 환경변수 DJANGO_ENV 값에 따라 settings 모듈 선택
-import os
+from .base import DEBUG
 
-env = os.getenv("DJANGO_ENV", "development").lower()
-if env == "production":
-    from .production import *  # noqa
+if DEBUG:
+    from .development import *
 else:
-    from .development import *  # noqa
+    from .production import *
