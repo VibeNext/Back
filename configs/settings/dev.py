@@ -3,8 +3,11 @@ import environ
 
 environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.dev'))
 
-DATABASES = {
-        "default": env.db()
+DATABASES = {    
+        "default": env.db_url(
+            "DATABASE_URL",
+            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+    )
 }
 
 # CACHES = {
