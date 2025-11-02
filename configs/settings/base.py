@@ -22,7 +22,7 @@ env = environ.Env(
     DEBUG = (bool, False),
     SECRET_KEY=(str, "dev-secret"),
 )
-environ.Env.read_env(os.path.join(BASE_DIR, '.env', '.env.base'))
+environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
