@@ -1,8 +1,19 @@
 from django.db import models
+from nanoid import generate
+
+def generate_nanoid():
+    return generate(size=12)
 
 # Create your models here.
 
 class SolutionHistory(models.Model):
+    id = models.CharField(
+    primary_key=True,
+    default=generate_nanoid,
+    editable=False,
+    unique=True,
+    max_length=21,
+    )
     user=models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
