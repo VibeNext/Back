@@ -10,9 +10,13 @@ DATABASES = {
     )
 }
 
-# CACHES = {
-#    'default': env.cache(),
-#}
+CACHES = {
+    "default": env.cache_url(
+        "CACHE_URL",
+        default="locmemcache://",
+    )
+}
+
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 

@@ -22,7 +22,7 @@ env = environ.Env(
     DEBUG = (bool, False),
     SECRET_KEY=(str, "dev-secret"),
 )
-environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env', '.env.base'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -30,8 +30,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-secret")
 DEBUG = env("DEBUG", default = True)
+ALLOWED_HOSTS = [env.list("ALLOWED_HOSTS", default=["*"])]
 
-ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'auth.User'
 
 # Application definition
