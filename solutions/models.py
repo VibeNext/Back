@@ -1,33 +1,29 @@
 from django.db import models
-from nanoid import generate
+from django_nanoid.models import NanoIDField 
 from utils.choices import Sender
-
-def generate_nanoid():
-    return generate(size=12)
 
 # Create your models here.
 
 class SolutionHistory(models.Model):
-    id = models.CharField(
+    id = NanoIDField(
     primary_key=True,
-    default=generate_nanoid,
     editable=False,
     unique=True,
     max_length=21,
     )
-    user=models.ForeignKey('accounts.User', on_delete=models.CASCADE)
-    mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE)
+    user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solutionhistory')
+    mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solutionhistory')
     created_at = models.DateTimeField(auto_now_add=True)
     solved_at = models.DateTimeField(null=True, blank=True)
     is_solved = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return f"{self.user} {self.mission.title} {self.created_at}"
 
 
     
 class Message(models.Model):
-    solution_history = models.ForeignKey(SolutionHistory, on_delete=models.CASCADE, related_name='messages')
+    solution_history = models.ForeignKey(SolutionHistory, on_delete=models.CASCADE, related_name='message')
     created_at = models.DateTimeField(auto_now_add=True)
     sender = models.CharField(
         max_length=10,
