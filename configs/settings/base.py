@@ -22,7 +22,18 @@ env = environ.Env(
     DEBUG = (bool, False),
     SECRET_KEY=(str, "dev-secret"),
 )
-environ.Env.read_env(os.path.join(BASE_DIR, '.env', '.env.base'))
+
+base_env_file = os.path.join(BASE_DIR, ".env", ".env.base")
+env.read_env(base_env_file)
+
+ENVIRONMENT = os.getenv("DJANGO_ENV", "dev")
+specific_env_file = os.path.join(BASE_DIR, ".env", f".env.{ENVIRONMENT}")
+
+if os.path.exists(specific_env_file):
+    env.read_env(specific_env_file)
+    print(f"✅ Loaded .env.{ENVIRONMENT}")
+else:
+    print(f"⚠️  No .env.{ENVIRONMENT} found, using base only.")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
