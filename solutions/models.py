@@ -1,5 +1,6 @@
 from django.db import models
 from nanoid import generate
+from utils.choices import Sender
 
 def generate_nanoid():
     return generate(size=12)
@@ -22,10 +23,6 @@ class SolutionHistory(models.Model):
 
     def __str__(self):
         return self.title
-    
-class Sender(models.TextChoices):
-    USER = 'user', 'User'
-    AI = 'ai', 'AI'
 
 
     
