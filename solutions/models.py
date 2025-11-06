@@ -11,7 +11,6 @@ class SolutionHistory(models.Model):
     unique=True,
     max_length=21,
     )
-    user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solutionhistory')
     user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solution_history')
     mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solution_history')
     created_at = models.DateTimeField(auto_now_add=True)
