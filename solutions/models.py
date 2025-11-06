@@ -12,7 +12,8 @@ class SolutionHistory(models.Model):
     max_length=21,
     )
     user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solutionhistory')
-    mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solutionhistory')
+    user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solution_history')
+    mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solution_history')
     created_at = models.DateTimeField(auto_now_add=True)
     solved_at = models.DateTimeField(null=True, blank=True)
     is_solved = models.BooleanField(default=False)
@@ -25,10 +26,8 @@ class SolutionHistory(models.Model):
 class Message(models.Model):
     solution_history = models.ForeignKey(SolutionHistory, on_delete=models.CASCADE, related_name='message')
     created_at = models.DateTimeField(auto_now_add=True)
-    sender = models.CharField(
-        max_length=10,
+    sender = models.IntegerField(
         choices=Sender.choices,
-        default=Sender.USER
     )
     content = models.TextField()
     
