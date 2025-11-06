@@ -26,10 +26,8 @@ class SolutionHistory(models.Model):
 class Message(models.Model):
     solution_history = models.ForeignKey(SolutionHistory, on_delete=models.CASCADE, related_name='message')
     created_at = models.DateTimeField(auto_now_add=True)
-    sender = models.CharField(
-        max_length=10,
+    sender = models.IntegerField(
         choices=Sender.choices,
-        default=Sender.USER
     )
     content = models.TextField()
     
