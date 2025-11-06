@@ -10,9 +10,9 @@ DATABASES = {
     )
 }
 
-# CACHES = {
-#    'default': env.cache(),
-#}
+CACHES = {
+    'default': env.cache(),
+}
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
