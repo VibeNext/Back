@@ -32,7 +32,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-secret")
 DEBUG = env("DEBUG", default = True)
 
 ALLOWED_HOSTS = []
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 
