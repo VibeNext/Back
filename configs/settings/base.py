@@ -19,8 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # env 로더
 env = environ.Env(
-    DEBUG = (bool, False),
-    SECRET_KEY=(str, "dev-secret"),
+    DEBUG = (bool),
+    SECRET_KEY=(str),
 )
 environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
 
@@ -28,10 +28,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-secret")
-DEBUG = env("DEBUG", default = True)
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
@@ -47,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'accounts.apps.AccountsConfig',
+    'missions.apps.MissionsConfig',
+    'solutions.apps.SolutionsConfig',
 ]
 
 MIDDLEWARE = [
