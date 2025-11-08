@@ -31,7 +31,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, 'env', '.env.base'))
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'accounts.apps.AccountsConfig',
     'missions.apps.MissionsConfig',
     'solutions.apps.SolutionsConfig',
 ]
