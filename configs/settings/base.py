@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'missions.apps.MissionsConfig',
     'solutions.apps.SolutionsConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
