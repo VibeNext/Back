@@ -3,8 +3,16 @@ from django.db import models
 from utils.choices import MissionCategoryChoices
 
 class Badge(models.Model):
+    id = models.CharField(
+        primary_key=True,
+        editable=False,
+        max_length=10,
+    )
     name = models.CharField(
         max_length=12,
+    )
+    description = models.CharField(
+        max_length=35,
     )
     image = models.ImageField(
         upload_to='badge/image',
@@ -19,6 +27,8 @@ class Mission(models.Model):
         'Badge',
         on_delete=models.RESTRICT,
         related_name='mission',
+        null=True,
+        blank=True,
     )
     category = models.CharField(
         max_length=10,
