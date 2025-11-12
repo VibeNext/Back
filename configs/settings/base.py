@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'missions.apps.MissionsConfig',
     'solutions.apps.SolutionsConfig',
-    'chat.apps.ChatConfig',
+    'chat',
+    'channels'
 ]
 
 ASGI_APPLICATION = 'configs.asgi.application'

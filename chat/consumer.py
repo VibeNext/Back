@@ -10,13 +10,25 @@ from django.contrib.auth.models import AnonymousUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print("WS PATH:", self.scope.get("path"), "QUERY:", self.scope.get("query_string"))
+
         # ws/solutions/<history_id>/chat/  (history_id = nanoid)
         self.history_id = self.scope['url_route']['kwargs']['history_id']
         self.ai_task = None
+        
+        # ✅ mock 플래그 파싱
+        query = parse_qs(self.scope.get("query_string", b"").decode())
+        self.mock = query.get("mock", ["0"])[0] in ("1", "true", "True")
 
         # 권한 체크
-        if not await self.user_can_access(self.scope.get("user"), self.history_id):
-            await self.close(code=4403)
+        # if not await self.user_can_access(self.scope.get("user"), self.history_id):
+        #     await self.close(code=4403)
+        #    return
+        
+        if self.mock:
+            # ✅ 개발 모드: 권한/DB 건너뛰고 즉시 수락
+            await self.accept()
+            await self.send_json({"type": "system", "message": "connected (mock=True)"})
             return
 
         await self.accept()
@@ -41,8 +53,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = self.scope.get("user")
         username = user.username if user and user.is_authenticated else "anonymous"
 
-        # 1) 사용자 메시지 저장
-        await self.save_message(self.history_id, user, message, sender="user")
+        # 실제 모드면 DB 저장
+        if not self.mock:
+            await self.save_message(self.history_id, user, message, sender="user")
 
         # 2) 내 화면에 바로 표시
         await self.send_json({"type": "message", "user": username, "message": message})
@@ -60,10 +73,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def _run_ai_stream(self, prompt: str):
         """AI 응답을 스트리밍으로 받아 조각을 모은 뒤, 최종 한 번만 전송."""
         try:
-            # 최근 히스토리(역순 정렬 → 다시 뒤집어 과거→현재 순서로)
-            history = await self.load_recent_history(self.history_id, limit=20)
-            # 초기 프롬프트
-            system_prompt = await self.get_system_prompt()
+            history = []
+            system_prompt = "You are a helpful assistant."
+
+            # 실제 모드면 최근 히스토리 로드
+            if not self.mock:
+                history = await self.load_recent_history(self.history_id, limit=20)
+                system_prompt = await self.get_system_prompt()
 
             deltas = []
             # 실제 구현에서는 Gemini Live API
@@ -73,7 +89,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             full_text = "".join(deltas).strip()
 
             # DB에 AI 답변 저장
-            await self.save_message(self.history_id, None, full_text, sender="ai")
+            if not self.mock:
+                await self.save_message(self.history_id, None, full_text, role="assistant")
 
             # 최종 한 번만 전송
             await self.send_json({"type": "message", "user": "ai", "message": full_text})
@@ -87,9 +104,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def user_can_access(self, user, history_nanoid) -> bool:
-        SolutionHistory = apps.get_model("solution", "SolutionHistory")
+        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
         try:
-            sh = SolutionHistory.objects.select_related("owner").get(pk=history_nanoid)
+            sh = SolutionHistory.objects.select_related("user").get(pk=history_nanoid)
         except SolutionHistory.DoesNotExist:
             return False
 
@@ -97,11 +114,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return False
 
         # 소유자만 입장 허용
-        return user == getattr(sh, "owner", None)
+        #return user == getattr(sh, "user", None)
 
     @sync_to_async
     def load_recent_history(self, history_nanoid, limit=20):
-        Messages = apps.get_model("solution", "Messages")
+        Messages = apps.get_model("solutions", "Messages")
         qs = (Messages.objects
               .filter(solution_history_id=history_nanoid)
               .order_by('-created_at')[:limit]
@@ -117,12 +134,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def save_message(self, history_nanoid, user, content: str, sender: str):
-        SolutionHistory = apps.get_model("solution", "SolutionHistory")
-        Messages = apps.get_model("solution", "Messages")
+        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
+        Messages = apps.get_model("solutions", "Messages")
         sh = SolutionHistory.objects.get(pk=history_nanoid)
         return Messages.objects.create(
             solution_history=sh,                      
-            sender=user if user and user.is_authenticated else None,
             sender=sender,                                # 'user' / 'ai'
             content=content,                          # 메시지 내용
         )

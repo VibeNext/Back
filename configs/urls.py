@@ -18,9 +18,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from chat.views import chat_test
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('missions/', include('missions.urls')),
+        path("test/chat/<str:history_id>/", chat_test, name="chat_test"),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
