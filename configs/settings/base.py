@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
 ]
 
+ASGI_APPLICATION = 'configs.asgi.application'
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
