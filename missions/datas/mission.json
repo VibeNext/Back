@@ -5,7 +5,7 @@
     "category": "sequence",
     "title": "요리사의 레시피 : 토마토 스프",
     "question_text": "오늘은 내가 요리사!\n갓 따온 토마토를 이용해서 맛있는 토마토 스프를 만들려고 해요.\n아래에 섞여 있는 조리 단계를 참고해서 올바른 레시피를 작성해 주세요.\n모든 과정을 순서대로 실행하면, 따뜻하고 맛있는 토마토 스프가 완성될 거예요!",
-    "question_image": "11_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/11_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -15,7 +15,7 @@
     "category": "sequence",
     "title": "요리사의 레시피 : 버섯 스프",
     "question_text": "오늘은 내가 요리사!\n갓 따온 버섯을 이용해서 맛있는 버섯 스프를 만들려고 해요.\n아래에 섞여 있는 조리 단계를 참고해서 올바른 레시피를 작성해 주세요.\n모든 과정을 순서대로 실행하면, 따뜻하고 맛있는 버섯 스프가 완성될 거예요!",
-    "question_image": "12_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/12_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -25,7 +25,7 @@
     "category": "sequence",
     "title": "요리사의 레시피 : 손님의 스프",
     "question_text": "프로 요리사가 되기 위한 마지막 단계!\n바로 다른 사람들의 주문에 맞춰 요리를 만들어보는 것이에요.\n아래 곰 손님은 “꿀이 들어가고, 허브가 뿌려진 스프” 를 원하고 있어요.\n지금까지 배운 순차 개념과 레시피들을 응용해서 손님께 드릴 맛있는 스프를 만들어볼까요?\n* 스프에 요리사가 원하는 다양한 재료를 추가하면 더 맛있는 스프가 완성될거에요!",
-    "question_image": "13_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/13_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -35,7 +35,7 @@
     "category": "selection",
     "title": "건축가의 잠금장치 : 하나의 열쇠로만",
     "question_text": "손재주가 뛰어난 건축가인 당신!\n뚝딱뚝딱 새로 지은 집의 문이 완성됐어요.\n이제 문단속을 위해 하나의 열쇠로만 문이 열리도록 해야해요.\n아래 그림을 보고, 어떤 열쇠로 문이 열리고 닫히는지 직접 조건문을 만들어 봅시다!",
-    "question_image": "21_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/21_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -45,7 +45,7 @@
     "category": "selection",
     "title": "건축가의 잠금장치 : 고장난 잠금장치",
     "question_text": "앗! 잠시 자리를 비운 사이, 누군가가 잠금장치를 망가뜨렸어요!\n방해꾼이 잠금장치를 엉망으로 만들어버린 바람에, 문이 이상하게 작동하기 시작했어요.\n아래 그림을 보고, 잠금장치에서 무엇이 잘못되었는지 설명해주세요.\n그 후 잠금장치가 올바르게 작동하도록 새로운 조건문을 직접 작성해봅시다!",
-    "question_image": "22_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/22_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -55,7 +55,7 @@
     "category": "selection",
     "title": "건축가의 잠금장치 : 이중잠금",
     "question_text": "건축가로서 능력을 인정받은 당신!\n이번에는 은행에서 새로운 잠금장치를 의뢰했어요.\n보다 뛰어난 보안을 위해, 이전보다 복잡한 규칙으로 문이 열리도록 만들어야 해요.\n아래 그림을 보고, 새로운 잠금장치에 맞는 조건문을 직접 작성해보세요!",
-    "question_image": "23_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/23_question_image.png",
     "ai_prompt": "",
     "answer_assets": [{ "example": "" }]
   },
@@ -65,9 +65,15 @@
     "category": "repetition",
     "title": "개발자의 로봇청소기 : 직선",
     "question_text": "똑똑한 당신은 로봇 개발자! 오늘은 로봇 청소기를 개발하고 있어요.\n아래 그림을 보고, 로봇이 모든 쓰레기를 청소할 수 있도록 명령을 입력해보세요.\n* 이 로봇 청소기는 한 번에 한 가지 일만 할 수 있어요.\n** '앞으로 한 칸 이동'하거나 '현재 위치한 한 칸만 청소'할 수 있어요.",
-    "question_image": "31_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/31_question_image.png",
     "ai_prompt": "",
-    "answer_assets": [{ "tile": "30_tile.png", "cleaner": "30_cleaner.png", "trash": "30_trash.png" }]
+    "answer_assets": [
+      {
+        "tile": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_tile.png",
+        "cleaner": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_cleaner.png",
+        "trash": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_trash.png"
+      }
+    ]
   },
   {
     "id": 32,
@@ -75,9 +81,15 @@
     "category": "repetition",
     "title": "개발자의 로봇청소기 : 2x2",
     "question_text": "앗, 로봇 청소기가 이상하게 작동하고 있어요!\n로봇 청소기 반복문이 잘못된 이유를 설명하고, 모든 쓰레기를 청소하도록 새로운 반복문을 작성해봅시다!\n* 이 로봇 청소기는 한 번에 한 가지 일만 할 수 있어요.\n** '앞으로 한 칸 이동'하거나 '회전(왼쪽/오른쪽 90도)'할 수 있어요.",
-    "question_image": "32_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/32_question_image.png",
     "ai_prompt": "",
-    "answer_assets": [{ "tile": "30_tile.png", "cleaner": "30_cleaner.png", "trash": "30_trash.png" }]
+    "answer_assets": [
+      {
+        "tile": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_tile.png",
+        "cleaner": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_cleaner.png",
+        "trash": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_trash.png"
+      }
+    ]
   },
   {
     "id": 33,
@@ -85,8 +97,14 @@
     "category": "repetition",
     "title": "개발자의 로봇청소기 : 지그재그",
     "question_text": "이번에는 지그재그로 놓인 쓰레기를 모두 청소해야 해요!\n아래 그림을 보고, 모든 쓰레기를 깨끗이 청소하도록 새로운 반복문을 직접 작성해봅시다!\n* 이 로봇 청소기는 한 번에 한 가지 일만 할 수 있어요.\n** '앞으로 한 칸 이동'하거나 '회전(왼쪽/오른쪽 90도)'할 수 있어요.",
-    "question_image": "33_question_image.png",
+    "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/33_question_image.png",
     "ai_prompt": "",
-    "answer_assets": [{ "tile": "30_tile.png", "cleaner": "30_cleaner.png", "trash": "30_trash.png" }]
+    "answer_assets": [
+      {
+        "tile": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_tile.png",
+        "cleaner": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_cleaner.png",
+        "trash": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/missions/30_trash.png"
+      }
+    ]
   }
 ]
