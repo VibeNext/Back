@@ -14,9 +14,7 @@ class Badge(models.Model):
     description = models.CharField(
         max_length=35,
     )
-    image = models.ImageField(
-        upload_to='badge/image',
-    )
+    image = models.URLField()
 
 class Mission(models.Model):
     id = models.IntegerField(
@@ -38,9 +36,7 @@ class Mission(models.Model):
         max_length=25,
     )
     question_text = models.TextField()
-    question_image = models.ImageField(
-        upload_to='mission/question_image',
-    )
+    question_image = models.URLField()
     ai_prompt = models.TextField()
     answer_assets = ArrayField(
         base_field=models.JSONField(
