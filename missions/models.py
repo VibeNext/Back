@@ -16,6 +16,9 @@ class Badge(models.Model):
     )
     image = models.URLField()
 
+    def __str__(self):
+        return self.name
+
 class Mission(models.Model):
     id = models.IntegerField(
         primary_key=True,
@@ -44,3 +47,6 @@ class Mission(models.Model):
         ),
         size=None,
     )
+
+    def __str__(self):
+        return self.title
