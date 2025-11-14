@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from missions.models import Badge, Chapter, Mission
 
 class Command(BaseCommand):
-    help = 'Insert data'
+    help = "Insert data"
     MODEL_MAP = {
         # 문자열: 모델
         'Badge': Badge,
@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def _get_model(self, model_name:str):
         model = self.MODEL_MAP.get(model_name)
         if not model:
-            raise CommandError('모델 이름이 올바르지 않습니다.')
+            raise CommandError("모델 이름이 올바르지 않습니다.")
         return model
 
     def _get_instance(self, model, data_item):
@@ -58,4 +58,4 @@ class Command(BaseCommand):
             for data_item in data_list
         ])
 
-        self.stdout.write(self.style.SUCCESS(f'{model_name} 데이터 {len(instances)}개를 추가했습니다.'))
+        self.stdout.write(self.style.SUCCESS(f"{model_name} 데이터 {len(instances)}개를 추가했습니다."))
