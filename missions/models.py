@@ -24,7 +24,7 @@ class Chapter(models.Model):
     title = models.CharField(
         max_length=2,
     )
-    theme = models.CharField(
+    subtitle = models.CharField(
         max_length=10,
     )
     badge = models.OneToOneField(

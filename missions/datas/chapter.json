@@ -2,19 +2,19 @@
   {
     "id": 1,
     "title": "순차",
-    "theme": "요리사의 레시피",
+    "subtitle": "요리사의 레시피",
     "badge": 1
   },
   {
     "id": 2,
     "title": "조건",
-    "theme": "건축가의 잠금장치",
+    "subtitle": "건축가의 잠금장치",
     "badge": 2
   },
   {
     "id": 3,
     "title": "반복",
-    "theme": "개발자의 로봇청소기",
+    "subtitle": "개발자의 로봇청소기",
     "badge": 3
   }
 ]
