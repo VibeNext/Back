@@ -29,7 +29,11 @@ class Command(BaseCommand):
             for fk_model in self.FK_MAP[model]:
                 fk_field_name = fk_model.__name__.lower()
                 fk_id = data_item.pop(fk_field_name)
-                fk_instance = self.fk_cache[fk_field_name][fk_id] if fk_id else None
+                if fk_id:
+                    fk_instance = self.fk_cache[fk_field_name][fk_id]
+                else:
+                    fk_instance = None
+                    self.stdout.write(self.style.WARNING(f"id {data_item['id']}의 {fk_field_name} 필드를 None으로 저장합니다."))
                 data_item[fk_field_name] = fk_instance
         return model(**data_item)
 
