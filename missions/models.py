@@ -1,11 +1,9 @@
 from django.db import models
-from utils.choices import MissionCategoryChoices
 
 class Badge(models.Model):
-    id = models.CharField(
+    id = models.IntegerField(
         primary_key=True,
         editable=False,
-        max_length=10,
     )
     name = models.CharField(
         max_length=12,
@@ -18,31 +16,46 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
+class Chapter(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        editable=False,
+    )
+    title = models.CharField(
+        max_length=2,
+    )
+    theme = models.CharField(
+        max_length=10,
+    )
+    badge = models.OneToOneField(
+        'Badge',
+        on_delete=models.RESTRICT,
+        related_name='chapter',
+    )
+
 class Mission(models.Model):
     id = models.IntegerField(
         primary_key=True,
         editable=False,
     )
-    badge = models.OneToOneField(
-        'Badge',
-        on_delete=models.RESTRICT,
+    chapter = models.ForeignKey(
+        'Chapter',
+        on_delete=models.CASCADE,
         related_name='mission',
-        null=True,
-        blank=True,
-    )
-    category = models.CharField(
-        max_length=10,
-        choices=MissionCategoryChoices.choices,
     )
     title = models.CharField(
         max_length=25,
     )
+    description = models.CharField(
+        max_length=50,
+    )
+    image = models.URLField()
     question_text = models.TextField()
     question_image = models.URLField()
-    ai_prompt = models.TextField()
     answer_assets = models.JSONField(
         default=dict,
     )
+    ai_prompt = models.TextField()
 
     def __str__(self):
         return self.title
