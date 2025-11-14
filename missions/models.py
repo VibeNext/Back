@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from utils.choices import MissionCategoryChoices
 
@@ -41,11 +40,8 @@ class Mission(models.Model):
     question_text = models.TextField()
     question_image = models.URLField()
     ai_prompt = models.TextField()
-    answer_assets = ArrayField(
-        base_field=models.JSONField(
-            default=dict,
-        ),
-        size=None,
+    answer_assets = models.JSONField(
+        default=dict,
     )
 
     def __str__(self):
