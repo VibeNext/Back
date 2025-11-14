@@ -3,24 +3,24 @@
     "id": "sequence",
     "name": "요리사의 순차 뱃지",
     "description": "순차 [요리사의 레시피] 학습단계를 완료하여 획득한 뱃지",
-    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badges/sequence.png"
+    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badge/image/sequence.png"
   },
   {
     "id": "selection",
     "name": "건축가의 조건 뱃지",
     "description": "조건 [건축가의 잠금장치] 학습단계를 완료하여 획득한 뱃지",
-    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badges/selection.png"
+    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badge/image/selection.png"
   },
   {
     "id": "repetition",
     "name": "개발자의 반복 뱃지",
     "description": "반복 [개발자의 로봇청소기] 학습단계를 완료하여 획득한 뱃지",
-    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badges/repetition.png"
+    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badge/image/repetition.png"
   },
   {
     "id": "nextviber",
     "name": "넥스트바이버 뱃지",
     "description": "순차, 조건, 반복 모든 학습단계를 완료하여 획득한 뱃지",
-    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badges/nextviber.png"
+    "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/badge/image/nextviber.png"
   }
 ]
