@@ -6,28 +6,32 @@ from missions.models import Badge, Chapter, Mission
 
 class Command(BaseCommand):
     help = 'Insert data'
+    MODEL_MAP = {
+        # 문자열: 모델
+        'Badge': Badge,
+        'Chapter': Chapter,
+        'Mission': Mission,
+    }
+    FK_MAP = {
+        # 모델: 외래키 필드 모델 튜플
+        Chapter: (Badge,),
+        Mission: (Chapter,)
+    }
 
     def _get_model(self, model_name:str):
-        if(model_name == 'Badge'):
-            return Badge
-        elif(model_name == 'Chapter'):
-            return Chapter
-        elif(model_name == 'Mission'):
-            return Mission
-        else:
+        model = self.MODEL_MAP.get(model_name)
+        if not model:
             raise CommandError('모델 이름이 올바르지 않습니다.')
+        return model
 
     def _get_instance(self, model, data_item):
-        if(model == Badge):
-            return Badge(**data_item)
-        elif(model == Chapter):
-            badge_id = data_item.pop('badge', None)
-            badge = Badge.objects.get(id=badge_id) if badge_id else None
-            return Chapter(badge=badge, **data_item)
-        elif(model == Mission):
-            chapter_id = data_item.pop('chapter', None)
-            chapter = Chapter.objects.get(id=chapter_id) if chapter_id else None
-            return Mission(chapter=chapter, **data_item)
+        if model in self.FK_MAP:
+            for fk_model in self.FK_MAP[model]:
+                fk_field_name = fk_model.__name__.lower()
+                fk_id = data_item.pop(fk_field_name)
+                fk_instance = fk_model.objects.get(id=fk_id) if fk_id else None
+                data_item[fk_field_name] = fk_instance
+        return model(**data_item)
 
     def add_arguments(self, parser):
         parser.add_argument('-m', '--model', required=True, type=str)
