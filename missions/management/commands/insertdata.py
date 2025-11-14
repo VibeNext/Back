@@ -47,11 +47,9 @@ class Command(BaseCommand):
         ) as file:
             data_list = json.load(file)
 
-        instance_list = list()
-        for data_item in data_list:
-            instance = self._get_instance(model, data_item)
-            instance_list.append(instance)
-
-        instances = model.objects.bulk_create(instance_list)
+        instances = model.objects.bulk_create([
+            self._get_instance(model, data_item)
+            for data_item in data_list
+        ])
 
         self.stdout.write(self.style.SUCCESS(f'{model_name} 데이터 {len(instances)}개를 추가했습니다.'))
