@@ -29,7 +29,7 @@ class Command(BaseCommand):
             for fk_model in self.FK_MAP[model]:
                 fk_field_name = fk_model.__name__.lower()
                 fk_id = data_item.pop(fk_field_name)
-                fk_instance = fk_model.objects.get(id=fk_id) if fk_id else None
+                fk_instance = self.fk_cache[fk_field_name][fk_id] if fk_id else None
                 data_item[fk_field_name] = fk_instance
         return model(**data_item)
 
@@ -39,6 +39,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         model_name = options['model'].capitalize()
         model = self._get_model(model_name)
+
+        self.fk_cache = dict()
+        if model in self.FK_MAP:
+            for fk_model in self.FK_MAP[model]:
+                fk_field_name = fk_model.__name__.lower()
+                self.fk_cache[fk_field_name] = {instance.id: instance for instance in fk_model.objects.all()}
 
         with open(
             file=os.path.join(settings.BASE_DIR, 'missions', 'datas', f'{model_name.lower()}.json'),
