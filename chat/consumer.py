@@ -7,12 +7,14 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
+from chat.ai.genhelper import stream_from_gemini
+from django.contrib.auth import get_user_model
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print("WS PATH:", self.scope.get("path"), "QUERY:", self.scope.get("query_string"))
 
-        # ws/solutions/<history_id>/chat/  (history_id = nanoid)
+        # ws/Solution/<history_id>/chat/  (history_id = nanoid)
         self.history_id = self.scope['url_route']['kwargs']['history_id']
         self.ai_task = None
         
@@ -33,6 +35,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
         await self.send_json({"type": "system", "message": "connected"})
+        await self.send_json({"type": "message", "user": "ai", "message": "[TEST] hello from server"})
 
     async def disconnect(self, close_code):
         # 진행 중인 AI 스트림이 있으면 취소
@@ -53,9 +56,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = self.scope.get("user")
         username = user.username if user and user.is_authenticated else "anonymous"
 
-        # 실제 모드면 DB 저장
+        # DB 저장
         if not self.mock:
-            await self.save_message(self.history_id, user, message, sender="user")
+            await self.save_message(self.history_id, user, message, sender=0)
 
         # 2) 내 화면에 바로 표시
         await self.send_json({"type": "message", "user": username, "message": message})
@@ -63,34 +66,74 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # 3) AI 생각중 표시
         await self.send_json({"type": "ai_thinking", "user": "ai"})
 
-        # 4) 기존 스트림이 돌고 있으면 취소(또는 큐잉으로 바꿔도 됨)
-        if self.ai_task and not self.ai_task.done():
-            self.ai_task.cancel()
+        deltas = []
+        error_text = None
 
-        # 5) AI 스트림 시작
-        self.ai_task = asyncio.create_task(self._run_ai_stream(message))
+        try:
+            history = []
+            if not self.mock:
+                history = await self.load_recent_history(self.history_id, limit=20)
+
+            print("[AI] start prompt:", repr(message))
+
+            async for chunk in stream_from_gemini(
+                prompt=message,
+                history=history,
+                system_instruction="You are a helpful assistant for this app.",
+            ):
+                if not chunk:
+                    continue
+                deltas.append(chunk)
+                print("[AI] delta:", repr(chunk))
+                await self.send_json({"type": "ai_delta", "delta": chunk})
+
+        except Exception as e:
+            # 예외라도 최종 메시지는 내려가게
+            error_text = f"(AI error) {e.__class__.__name__}: {e}"
+            print("[AI] EXC:", error_text)
+
+        finally:
+            full = "".join(deltas).strip()
+            if error_text and not full:
+                full = error_text
+            if not full:
+                # 모델이 빈값 준 경우에도 사용자 화면엔 뭔가 보이게
+                full = "[AI returned empty response]"
+
+            print("[AI] final:", repr(full))
+            await self.send_json({"type": "message", "user": "ai", "message": full})
+
+            if not self.mock:
+                try:
+                    await self.save_message(self.history_id, None, full, sender=1)
+                except Exception as se:
+                    print("[AI] save_message EXC:", se)
+
+            await self.send_json({"type": "ai_done", "user": "ai"})
+ 
+    
 
     async def _run_ai_stream(self, prompt: str):
         """AI 응답을 스트리밍으로 받아 조각을 모은 뒤, 최종 한 번만 전송."""
         try:
             history = []
-            system_prompt = "You are a helpful assistant."
+            system_instruction = "You are a helpful assistant."
 
             # 실제 모드면 최근 히스토리 로드
             if not self.mock:
                 history = await self.load_recent_history(self.history_id, limit=20)
-                system_prompt = await self.get_system_prompt()
+                system_instruction = await self.get_system_instruction()
 
             deltas = []
-            # 실제 구현에서는 Gemini Live API
-            async for chunk in stream_from_gemini(prompt, history=history, system_prompt=system_prompt):
+            
+            async for chunk in stream_from_gemini(prompt, history=history, system_instruction=system_instruction):
                 deltas.append(chunk)
 
             full_text = "".join(deltas).strip()
 
             # DB에 AI 답변 저장
             if not self.mock:
-                await self.save_message(self.history_id, None, full_text, role="assistant")
+                await self.save_message(self.history_id, None, full_text, sender="assistant")
 
             # 최종 한 번만 전송
             await self.send_json({"type": "message", "user": "ai", "message": full_text})
@@ -104,22 +147,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def user_can_access(self, user, history_nanoid) -> bool:
-        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
+        solutionHistory = apps.get_model("solutions", "SolutionHistory")
         try:
-            sh = SolutionHistory.objects.select_related("user").get(pk=history_nanoid)
-        except SolutionHistory.DoesNotExist:
+            sh = solutionHistory.objects.select_related("user").get(pk=history_nanoid)
+        except solutionHistory.DoesNotExist:
             return False
 
         if user is None or isinstance(user, AnonymousUser):
             return False
 
         # 소유자만 입장 허용
-        #return user == getattr(sh, "user", None)
+        # return user == getattr(sh, "user", None)
 
     @sync_to_async
+    def get_or_create_history(self, history_nanoid, user):
+        solutionHistory = apps.get_model("solutions", "SolutionHistory")
+        User = get_user_model()
+
+        # 1) owner 결정: 로그인 유저가 있으면 그거, 아니면 mock 유저
+        if user and getattr(user, "is_authenticated", False):
+            owner = user
+        else:
+            # 🔥 여기 email은 아까 shell에서 만든 mock 유저 이메일이랑 맞추기
+            owner = User.objects.get(email="mock@example.com")
+
+        sh, created = solutionHistory.objects.get_or_create(
+            pk=history_nanoid,
+            defaults={"user": owner},
+        )
+        return sh
+    
+    @sync_to_async
     def load_recent_history(self, history_nanoid, limit=20):
-        Messages = apps.get_model("solutions", "Messages")
-        qs = (Messages.objects
+        Message = apps.get_model("solutions", "Message")
+        qs = (Message.objects
               .filter(solution_history_id=history_nanoid)
               .order_by('-created_at')[:limit]
               .values("sender", "content"))
@@ -128,29 +189,57 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return items
 
     @sync_to_async
-    def get_system_prompt(self) -> str:
+    def get_system_instruction(self) -> str:
         # 초기 프롬프트
         return "You are a helpful assistant. Answer briefly and clearly."
 
     @sync_to_async
     def save_message(self, history_nanoid, user, content: str, sender: str):
-        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
-        Messages = apps.get_model("solutions", "Messages")
-        sh = SolutionHistory.objects.get(pk=history_nanoid)
-        return Messages.objects.create(
-            solution_history=sh,                      
-            sender=sender,                                # 'user' / 'ai'
-            content=content,                          # 메시지 내용
+        solutionHistory = apps.get_model("solutions", "SolutionHistory")
+        Message = apps.get_model("solutions", "Message")
+        User = get_user_model()
+
+        # 1) owner 결정: 실제 로그인 유저가 있으면 그걸 쓰고,
+        #    아니면 mock 유저로 대체
+        if user and getattr(user, "is_authenticated", False):
+            owner = user
+        else:
+            owner = User.objects.get(email="mock@example.com")
+
+        # 2) SolutionHistory 없으면 자동 생성
+        sh, _ = solutionHistory.objects.get_or_create(
+            pk=history_nanoid,
+            defaults={"user": owner},
         )
 
+        # 3) Message 저장
+        return Message.objects.create(
+            solution_history=sh,
+            sender=sender,      # 'user' / 'ai'
+            content=content,
+        )
+
+    
+    @sync_to_async
+    def save_message(self, history_nanoid, user, content: str, sender: str):
+        solutionHistory = apps.get_model("solutions", "SolutionHistory")
+        Message = apps.get_model("solutions", "Message")
+
+        # 🔹 기존: sh = solutionHistory.objects.get(pk=history_nanoid)
+        # 🔹 변경: 없으면 새로 생성
+        sh, user= solutionHistory.objects.get_or_create(
+            pk=history_nanoid,
+            defaults={
+                "user": user if user and not isinstance(user, AnonymousUser) and user.is_authenticated else None,
+                "mission_id": 13, # 기본값 설정
+            }
+        )
+
+        return Message.objects.create(
+            solution_history=sh,
+            sender=sender,      # 'user' / 'ai'
+            content=content,
+        )
     async def send_json(self, payload: dict):
         await self.send(text_data=json.dumps(payload))
 
-
-# ----- Gemini Live API로 -----
-async def stream_from_gemini(prompt: str, history=None, system_prompt: str = ""):
-    # history, system_prompt를 모델 호출 시 컨텍스트로 사용하도록 구현
-    fake = ["답변", " 을", " 준비", " 중...", " 완료!"]
-    for c in fake:
-        await asyncio.sleep(0.05)
-        yield c

@@ -64,7 +64,7 @@
 
       function wsUrl() {
         const proto = (location.protocol === "https:") ? "wss" : "ws";
-        return `${proto}://${location.host}/ws/solutions/${historyId}/chat/?mock=1`;
+        return `${proto}://${location.host}/ws/solutions/${historyId}/chat/?mock=0`;
       }
 
       function setState(state) {
@@ -106,6 +106,7 @@
         };
 
         socket.onmessage = (evt) => {
+          console.log("WS RAW:", evt.data);
           try {
             const data = JSON.parse(evt.data);
             handleMessage(data);
@@ -116,39 +117,47 @@
       }
 
       function handleMessage(data) {
-        switch (data.type) {
-          case "system":
-            append("system", data.message || "");
-            break;
-          case "message": {
-            // AI가 최종 메시지 보낼 때 thinking 제거
-            if (thinkingEl) {
-              thinkingEl.remove();
-              thinkingEl = null;
-            }
-            const who = data.user === "ai" ? "ai" : "user";
-            append(who, data.message || "");
-            break;
-          }
-          case "ai_thinking": {
-            if (!thinkingEl) {
-              thinkingEl = append("system", "AI가 생각중...");
-              thinkingEl.classList.add("thinking");
-            }
-            break;
-          }
-          case "ai_done": {
-            if (thinkingEl) {
-              thinkingEl.remove();
-              thinkingEl = null;
-            }
-            append("system", "AI 응답 완료");
-            break;
-          }
-          default:
-            append("system", "unknown type: " + data.type);
-        }
+  // 공통적으로 message와 content 둘 다 대응
+  const text = data.message || data.content || "";
+
+  switch (data.type) {
+    case "system":
+      append("system", text);
+      break;
+
+    case "message": {
+      // AI가 최종 메시지 보낼 때 thinking 제거
+      if (thinkingEl) {
+        thinkingEl.remove();
+        thinkingEl = null;
       }
+      const who = data.user === "ai" ? "ai" : "user";
+      append(who, text);
+      break;
+    }
+
+    case "ai_thinking": {
+      if (!thinkingEl) {
+        thinkingEl = append("system", "AI가 생각중...");
+        thinkingEl.classList.add("thinking");
+      }
+      break;
+    }
+
+    case "ai_done": {
+      if (thinkingEl) {
+        thinkingEl.remove();
+        thinkingEl = null;
+      }
+      append("system", "AI 응답 완료");
+      break;
+    }
+
+    default:
+      append("system", "unknown type: " + data.type);
+  }
+}
+
 
       function sendMessage() {
         if (!socket || socket.readyState !== WebSocket.OPEN) return;

@@ -1,5 +1,5 @@
 import os
-print(">>> LOADING configs.asgi (ProtocolTypeRouter MODE)")  # ★ 콘솔에 반드시 보여야 함
+print(">>> LOADING configs.asgi (ProtocolTypeRouter MODE)") 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configs.settings')
 
