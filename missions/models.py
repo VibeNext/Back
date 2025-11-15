@@ -1,13 +1,36 @@
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from utils.choices import MissionCategoryChoices
 
 class Badge(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        editable=False,
+    )
     name = models.CharField(
         max_length=12,
     )
-    image = models.ImageField(
-        upload_to='badge/image',
+    description = models.CharField(
+        max_length=35,
+    )
+    image = models.URLField()
+
+    def __str__(self):
+        return self.name
+
+class Chapter(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        editable=False,
+    )
+    title = models.CharField(
+        max_length=2,
+    )
+    subtitle = models.CharField(
+        max_length=10,
+    )
+    badge = models.OneToOneField(
+        'Badge',
+        on_delete=models.RESTRICT,
+        related_name='chapter',
     )
 
 class Mission(models.Model):
@@ -15,26 +38,24 @@ class Mission(models.Model):
         primary_key=True,
         editable=False,
     )
-    badge = models.OneToOneField(
-        'Badge',
-        on_delete=models.RESTRICT,
+    chapter = models.ForeignKey(
+        'Chapter',
+        on_delete=models.CASCADE,
         related_name='mission',
-    )
-    category = models.CharField(
-        max_length=10,
-        choices=MissionCategoryChoices.choices,
     )
     title = models.CharField(
         max_length=25,
     )
+    description = models.CharField(
+        max_length=50,
+    )
+    image = models.URLField()
     question_text = models.TextField()
-    question_image = models.ImageField(
-        upload_to='mission/question_image',
+    question_image = models.URLField()
+    answer_assets = models.JSONField(
+        default=dict,
     )
     ai_prompt = models.TextField()
-    answer_assets = ArrayField(
-        base_field=models.JSONField(
-            default=dict,
-        ),
-        size=None,
-    )
+
+    def __str__(self):
+        return self.title
