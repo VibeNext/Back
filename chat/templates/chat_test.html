@@ -64,7 +64,7 @@
 
       function wsUrl() {
         const proto = (location.protocol === "https:") ? "wss" : "ws";
-        return `${proto}://${location.host}/ws/solutions/${historyId}/chat/?mock=0`;
+        return `${proto}://${location.host}/ws/solutions/${historyId}/chat/`;
       }
 
       function setState(state) {

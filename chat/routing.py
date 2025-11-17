@@ -6,5 +6,5 @@ websocket_urlpatterns = [
     # re_path(r'^ws/solutions/(?P<history_id>[A-Za-z0-9_-]{21})/chat/$', 
     #       consumers.ChatConsumer.as_asgi()),
 
-    path("ws/solutions/<str:history_id>/chat/", ChatConsumer.as_asgi())
+   re_path(r"ws/solutions/(?P<history_id>[^/]+)/chat/$", ChatConsumer.as_asgi())
 ]
