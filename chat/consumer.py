@@ -8,7 +8,7 @@ from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
-from chat.ai.service import (
+from chat.service import (
     get_system_instruction,
     user_can_access,
     get_history,
