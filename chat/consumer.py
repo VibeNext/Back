@@ -8,38 +8,39 @@ from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
+from chat.ai.service import *
 
 from chat.ai.genhelper import stream_from_gemini
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print("WS PATH:", self.scope.get("path"), "QUERY:", self.scope.get("query_string"))
+        path = self.scope.get("path")
+        query = self.scope.get("query_string")
+        user = self.scope.get("user")
+
+        print("=== CONNECT CALLED ===")
+        print("PATH:", path, "QUERY:", query, "USER:", user)
 
         history_id = self.scope.get("url_route", {}).get("kwargs", {}).get("history_id")
+        print("history_id from url_route:", history_id)
 
         if not history_id:
-            # history_id 없으면 바로 연결 종료
+            print("[CONNECT] NO HISTORY_ID -> close 4400")
             await self.close(code=4400)
             return
 
-        user = self.scope.get("user")
-
-        # 권한 체크 쓰려면 여기서
-        # if not await self.user_can_access(user, history_id):
-        #     await self.close(code=4403)
-        #     return
-
-        # 2) 이미 만들어져 있는 history만 조회
         try:
             sh = await self.get_or_create_history(history_id, user)
+            print("[CONNECT] FOUND SolutionHistory:", sh.pk)
         except Exception as e:
-            # SolutionHistory 없으면 바로 끊어버림
-            print("get_or_create_history error:", e)
+            print("[CONNECT] get_or_create_history ERROR:", repr(e))
             await self.close(code=4404)
             return
 
         self.history_id = str(sh.pk)
+
+        self.system_instruction = await get_system_instruction(self.history_id)
 
         await self.accept()
         await self.send_json({
@@ -49,10 +50,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         })
 
 
+
     async def disconnect(self, close_code):
         # 진행 중인 AI 스트림이 있으면 취소
-        if self.ai_task and not self.ai_task.done():
-            self.ai_task.cancel()
+        ai_task = getattr(self, "ai_task", None)
+        if ai_task and not ai_task.done():
+            ai_task.cancel()
 
     async def receive(self, text_data=None, bytes_data=None):
         # 클라이언트가 보낸 메시지 파싱
@@ -87,7 +90,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             async for chunk in stream_from_gemini(
                 prompt=message,
                 history=history,
-                system_instruction="You are a helpful assistant for this app.",
+                system_instruction=self.system_instruction,
             ):
                 if not chunk:
                     continue
@@ -135,16 +138,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """AI 응답을 스트리밍으로 받아 조각을 모은 뒤, 최종 한 번만 전송."""
         try:
             history = []
-            system_instruction = "You are a helpful assistant."
+            system_instruction = self.system_instruction
 
             # 실제 모드면 최근 히스토리 로드
             if not self.mock:
                 history = await self.load_recent_history(self.history_id, limit=20)
-                system_instruction = await self.get_system_instruction()
+                system_instruction = await get_system_instruction()
 
             deltas = []
             
-            async for chunk in stream_from_gemini(prompt, history=history, system_instruction=system_instruction):
+            async for chunk in stream_from_gemini(prompt, history=history, system_instruction=self.system_instruction):
                 deltas.append(chunk)
 
             full_text = "".join(deltas).strip()
@@ -161,32 +164,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # 새 사용자 메시지로 이전 스트림 취소된 경우
             pass
         
-    def _get_or_create_history_sync(self, history_nanoid, user=None):
-        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
-        # 자동 생성 안 하고, pk로만 조회
-        return SolutionHistory.objects.get(pk=history_nanoid)
-
+   
 
     # ---------------- 권한 & DB I/O ----------------
 
-    @sync_to_async
-    def user_can_access(self, user, history_nanoid) -> bool:
-        solutionHistory = apps.get_model("solutions", "SolutionHistory")
-        try:
-            sh = solutionHistory.objects.select_related("user").get(pk=history_nanoid)
-        except solutionHistory.DoesNotExist:
-            return False
 
-        if user is None or isinstance(user, AnonymousUser):
-            return False
-
-        # 소유자만 입장 허용
-        # return user == getattr(sh, "user", None)
 
     @sync_to_async
-    def get_or_create_history(self, history_nanoid, user):
-        return self._get_or_create_history_sync(history_nanoid, user)
-    
+    def get_or_create_history(self, history_nanoid, user=None):
+        """
+        지금은 'create' 안 하고, 이미 존재하는 history만 pk로 가져온다.
+        없으면 DoesNotExist 예외 그대로 던짐.
+        """
+        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
+        return SolutionHistory.objects.get(pk=history_nanoid)
+
     @sync_to_async
     def load_recent_history(self, history_nanoid, limit=20):
         """
@@ -230,8 +222,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         solutionHistory = apps.get_model("solutions", "SolutionHistory")
         Message = apps.get_model("solutions", "Message")
 
-        # history가 없으면 자동 생성 (owner 포함)
-        sh = self._get_or_create_history_sync(history_nanoid, user)
+        sh = solutionHistory.objects.get(pk=history_nanoid)
 
         return Message.objects.create(
             solution_history=sh,
