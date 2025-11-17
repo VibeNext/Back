@@ -2,17 +2,10 @@ import json
 import asyncio
 from urllib.parse import parse_qs
 
-from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth import get_user_model
 
-from chat.ai.genhelper import stream_from_gemini
-
-# chat/ai/service.py
-from asgiref.sync import sync_to_async
-from django.apps import apps
 
 
 @sync_to_async

@@ -89,7 +89,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # AI context 유지용
         try:
             history = []
-            history = await load_recent_history(self.history_id, limit=20)
+            history = await load_recent_history(self.history_id, limit=30)
 
             print("[AI] start prompt:", repr(message))
 
@@ -138,40 +138,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return user
         # TODO: 운영에서는 anonymous 정책에 맞게 처리
         return User.objects.get(email="mock@example.com")
-    
-
-    async def _run_ai_stream(self, prompt: str):
-        """AI 응답을 스트리밍으로 받아 조각을 모은 뒤, 최종 한 번만 전송."""
-        try:
-            history = []
-            system_instruction = self.system_instruction
-
-            # 실제 모드면 최근 히스토리 로드
-            if not self.mock:
-                history = await load_recent_history(self.history_id, limit=30)
-                system_instruction = await get_system_instruction()
-
-            deltas = []
-            
-            async for chunk in stream_from_gemini(prompt, history=history, system_instruction=self.system_instruction):
-                deltas.append(chunk)
-
-            full_text = "".join(deltas).strip()
-
-            # DB에 AI 답변 저장
-            if not self.mock:
-                await save_message(self.history_id, full_text, sender=1)
-
-            # 최종 한 번만 전송
-            await self.send_json({"type": "message", "user": "ai", "message": full_text})
-            await self.send_json({"type": "ai_done", "user": "ai"})
-
-        except asyncio.CancelledError:
-            # 새 사용자 메시지로 이전 스트림 취소된 경우
-            pass
-        
-   
-
 
     async def send_json(self, payload: dict):
         await self.send(text_data=json.dumps(payload))
