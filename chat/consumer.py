@@ -8,7 +8,13 @@ from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
-from chat.ai.service import *
+from chat.ai.service import (
+    get_system_instruction,
+    user_can_access,
+    get_history,
+    load_recent_history,
+    save_message,
+)
 
 from chat.ai.genhelper import stream_from_gemini
 
@@ -31,10 +37,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         try:
-            sh = await self.get_or_create_history(history_id, user)
+            sh = await get_history(history_id)
             print("[CONNECT] FOUND SolutionHistory:", sh.pk)
         except Exception as e:
-            print("[CONNECT] get_or_create_history ERROR:", repr(e))
+            print("[CONNECT] get_history ERROR:", repr(e))
             await self.close(code=4404)
             return
 
@@ -72,7 +78,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         username = user.username if user and user.is_authenticated else "anonymous"
 
         # 사용자 메시지 DB 저장
-        await self.save_message(self.history_id, user, message, sender=0)
+        await save_message(self.history_id, message, sender=0)
 
         # 내 화면에 바로 표시
         await self.send_json({"type": "message", "user": username, "message": message})
@@ -83,7 +89,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # AI context 유지용
         try:
             history = []
-            history = await self.load_recent_history(self.history_id, limit=20)
+            history = await load_recent_history(self.history_id, limit=20)
 
             print("[AI] start prompt:", repr(message))
 
@@ -116,7 +122,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send_json({"type": "message", "user": "ai", "message": full})
 
             try:
-                await self.save_message(self.history_id, None, full, sender=1)
+                await save_message(self.history_id, full, sender=1)
             except Exception as se:
                 print("[AI] save_message EXC:", se)
 
@@ -142,7 +148,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             # 실제 모드면 최근 히스토리 로드
             if not self.mock:
-                history = await self.load_recent_history(self.history_id, limit=20)
+                history = await load_recent_history(self.history_id, limit=30)
                 system_instruction = await get_system_instruction()
 
             deltas = []
@@ -154,7 +160,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             # DB에 AI 답변 저장
             if not self.mock:
-                await self.save_message(self.history_id, None, full_text, sender=1)
+                await save_message(self.history_id, full_text, sender=1)
 
             # 최종 한 번만 전송
             await self.send_json({"type": "message", "user": "ai", "message": full_text})
@@ -166,69 +172,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
    
 
-    # ---------------- 권한 & DB I/O ----------------
-
-
-
-    @sync_to_async
-    def get_or_create_history(self, history_nanoid, user=None):
-        """
-        지금은 'create' 안 하고, 이미 존재하는 history만 pk로 가져온다.
-        없으면 DoesNotExist 예외 그대로 던짐.
-        """
-        SolutionHistory = apps.get_model("solutions", "SolutionHistory")
-        return SolutionHistory.objects.get(pk=history_nanoid)
-
-    @sync_to_async
-    def load_recent_history(self, history_nanoid, limit=20):
-        """
-        Gemini에 넘길 history 형식:
-        [
-          {"sender": "user", "content": "..."},   # sender: 'user' or 'model'
-          {"sender": "model", "content": "..."},
-          ...
-        ]
-        """
-        Message = apps.get_model("solutions", "Message")
-        qs = (
-            Message.objects
-            .filter(solution_history_id=history_nanoid)
-            .order_by('-created_at')[:limit]
-            .values("sender", "content")   # sender: int (0=user, 1=ai)
-        )
-        items = list(qs)
-        items.reverse()  # 오래된 것부터
-
-        history = []
-        for item in items:
-            sender_code = item["sender"]
-            content = item["content"] or ""
-
-            # Gemini role: 'user' / 'model'
-            role = "user" if sender_code == 0 else "model"
-
-            history.append({
-                "sender": role,
-                "content": content,
-            })
-
-        return history
-
-    @sync_to_async
-    def save_message(self, history_nanoid, user, content: str, sender: int):
-        """
-        sender: 0=user, 1=ai (Message 모델의 IntegerField choices와 맞춰야 함)
-        """
-        solutionHistory = apps.get_model("solutions", "SolutionHistory")
-        Message = apps.get_model("solutions", "Message")
-
-        sh = solutionHistory.objects.get(pk=history_nanoid)
-
-        return Message.objects.create(
-            solution_history=sh,
-            sender=sender,      # 0 or 1
-            content=content,
-        )
 
     async def send_json(self, payload: dict):
         await self.send(text_data=json.dumps(payload))

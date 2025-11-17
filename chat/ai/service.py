@@ -48,3 +48,50 @@ def user_can_access(self, user, history_nanoid) -> bool:
 
     # 소유자만 입장 허용
      # return user == getattr(sh, "user", None)
+     
+@sync_to_async
+def get_history(history_id: str):
+    SolutionHistory = apps.get_model("solutions", "SolutionHistory")
+    return SolutionHistory.objects.get(pk=history_id)
+
+@sync_to_async
+def load_recent_history(history_id: str, limit: int = 30):
+    Message = apps.get_model("solutions", "Message")
+    qs = (
+        Message.objects
+        .filter(solution_history_id=history_id)
+        .order_by("-created_at")[:limit]
+        .values("sender", "content")
+    )
+    items = list(qs)
+    items.reverse()
+    
+    history = []
+    for item in items:
+        sender_code = item["sender"]
+        content = item["content"] or ""
+        role = "user" if sender_code == 0 else "model"
+        
+        history.append({
+            "sender": role,
+            "content": content,
+        })
+    
+    return history
+
+
+@sync_to_async
+def save_message(history_id: str, content: str, sender: int):
+    """
+    sender: 0=user, 1=ai
+    """
+    SolutionHistory = apps.get_model("solutions", "SolutionHistory")
+    Message = apps.get_model("solutions", "Message")
+
+    sh = SolutionHistory.objects.get(pk=history_id)
+
+    return Message.objects.create(
+        solution_history=sh,
+        sender=sender,
+        content=content,
+    )
