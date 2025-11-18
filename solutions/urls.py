@@ -6,5 +6,6 @@ app_name = 'solutions'
 urlpatterns = [
     path('list/<int:pk>/', SolutionHistoryListView.as_view(), name='solution-list'),
     path('detail/<int:pk>/', SolutionHistoryDetailView.as_view(), name='solution-detail'),
-    
+    path("new/<int:mission_id>/", SolutionHistoryCreateView.as_view(), name="solution-create"),
+    path("update/<int:pk>/", SolutionHistoryUpdateView.as_view(), name="solution-update"),
 ]

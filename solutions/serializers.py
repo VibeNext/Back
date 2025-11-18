@@ -3,6 +3,16 @@ from .models import SolutionHistory, Message
 from django.urls import reverse
 from missions.serializers import MissionSerializer
 
+class SolutionHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SolutionHistory
+        fields = "__all__"
+
+class SolutionHistoryStatusUpdateSerializer(serializers.Serializer):
+    solution_history_id = serializers.CharField()
+    is_solved = serializers.BooleanField()
+    
+
 class SolutionHistoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
