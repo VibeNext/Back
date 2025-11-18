@@ -20,10 +20,6 @@ class SolutionHistoryListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        # is_solved가 False면 updated_at 키 제거
-        if not data.get("is_solved"):
-            data.pop("updated_at", None)
-
         return data
     
 class ChatMessageSerializer(serializers.ModelSerializer):

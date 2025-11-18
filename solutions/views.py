@@ -50,8 +50,6 @@ class SolutionHistoryDetailView(APIView):
         return Response(serializer.data)
 
     
-    
-
 class SolutionHistoryCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
