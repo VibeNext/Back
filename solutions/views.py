@@ -23,18 +23,24 @@ class SolutionHistoryListView(generics.ListAPIView):
             .filter(user=user, mission_id=mission_id)
             .order_by("created_at")
         )
-
-class SolutionHistoryDetailView(generics.RetrieveAPIView):
+        
+class SolutionHistoryDetailView(APIView):
     serializer_class = SolutionHistoryDetailSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, solution_history_id):
-        solution_history = get_object_or_404(SolutionHistory, pk=solution_history_id)
+    def get(self, *args, **kwargs):
+        solution_history_id = kwargs.get("solution_history_id")
+
+        solution_history = get_object_or_404(
+            SolutionHistory,
+            pk=solution_history_id,
+        )
+
         messages = Message.objects.filter(
             solution_history=solution_history
         ).order_by("created_at")
 
-        mission = solution_history.mission 
+        mission = solution_history.mission
 
         serializer = SolutionHistoryDetailSerializer({
             "mission": mission,
@@ -42,54 +48,49 @@ class SolutionHistoryDetailView(generics.RetrieveAPIView):
         })
 
         return Response(serializer.data)
+
     
     
 
-class SolutionHistoryCreateView(generics.CreateAPIView):
-    queryset = SolutionHistory.objects.all()
-    serializer_class = SolutionHistorySerializer
-    permission_classes = [permissions.IsAuthenticated]  # 로그인
+class SolutionHistoryCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        mission_id = self.kwargs["mission_id"]  # path param
+    def post(self, request):
+        mission_id = request.data.get("mission_id")
+        if mission_id is None:
+            return Response(
+                {"mission_id": ["이 필드는 필수 항목입니다."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         mission = get_object_or_404(Mission, pk=mission_id)
 
-        serializer.save(
-            user=self.request.user,
+        solution = SolutionHistory.objects.create(
+            user=request.user,
             mission=mission,
+        )
+
+        return Response(
+            SolutionHistorySerializer(solution).data,
+            status=status.HTTP_201_CREATED,
         )
         
 class SolutionHistoryUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def patch(self, request):
-        # 요청 바디 검증
+    def patch(self, request, solution_history_id):
+        
         serializer = SolutionHistoryStatusUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
-
-        solution_history_id = data["solution_history_id"]
-        is_solved = data["is_solved"]
-        updated_at = data["updated_at"]
+        is_solved = serializer.validated_data["is_solved"]
 
         instance = get_object_or_404(
             SolutionHistory,
             pk=solution_history_id,
-            user=request.user,  
         )
 
         instance.is_solved = is_solved
-        instance.save()
+        instance.save()   # updated_at 자동 업데이트
 
-        try:
-            from .serializers import SolutionHistorySerializer
-            response_data = SolutionHistorySerializer(instance).data
-        except ImportError:
-            # 간단하게만
-            response_data = {
-                "solution_history_id": solution_history_id,
-                "is_solved": is_solved,
-                "updated_at": instance.updated_at,
-            }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        response = SolutionHistorySerializer(instance)
+        return Response(response.data, status=status.HTTP_200_OK)

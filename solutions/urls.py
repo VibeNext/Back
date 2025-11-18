@@ -4,8 +4,8 @@ from .views import *
 app_name = 'solutions'
 
 urlpatterns = [
-    path('list/<int:pk>/', SolutionHistoryListView.as_view(), name='solution-list'),
-    path('detail/<int:pk>/', SolutionHistoryDetailView.as_view(), name='solution-detail'),
-    path("new/<int:mission_id>/", SolutionHistoryCreateView.as_view(), name="solution-create"),
-    path("update/<int:pk>/", SolutionHistoryUpdateView.as_view(), name="solution-update"),
+    path('list/<int:mission_id>/', SolutionHistoryListView.as_view(), name='solution-list'),
+    path('detail/<str:solution_history_id>/', SolutionHistoryDetailView.as_view(), name='solution-detail'),
+    path("new/", SolutionHistoryCreateView.as_view(), name="solution-create"),
+    path("update/<str:solution_history_id>/", SolutionHistoryUpdateView.as_view(), name="solution-update"),
 ]

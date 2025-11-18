@@ -2,7 +2,6 @@ from django.db import models
 from django_nanoid.models import NANOIDField 
 from utils.choices import Sender
 
-# Create your models here.
 
 class SolutionHistory(models.Model):
     id = NANOIDField(

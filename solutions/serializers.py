@@ -9,21 +9,20 @@ class SolutionHistorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class SolutionHistoryStatusUpdateSerializer(serializers.Serializer):
-    solution_history_id = serializers.CharField()
     is_solved = serializers.BooleanField()
     
 
 class SolutionHistoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
-        fields = ['id', 'created_at', 'is_solved', 'solved_at']
+        fields = ['id', 'created_at', 'is_solved', 'updated_at']
         
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        # is_solved가 False면 solved_at 키 제거
+        # is_solved가 False면 updated_at 키 제거
         if not data.get("is_solved"):
-            data.pop("solved_at", None)
+            data.pop("updated_at", None)
 
         return data
     
@@ -31,12 +30,7 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['created_at', 'sender', 'content']
-
-class MissionConverationSerializer(serializers.Serializer):
+    
+class SolutionHistoryDetailSerializer(serializers.Serializer):
     mission = MissionSerializer()
     messages = ChatMessageSerializer(many=True)
-    
-class SolutionHistoryDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SolutionHistory
-        fields = {'mission', 'messages'}
