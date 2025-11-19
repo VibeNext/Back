@@ -15,3 +15,9 @@ class MissionListSerializer(serializers.ModelSerializer):
 
     def get_number(self, obj):
         return obj.id % 10
+
+class MissionListLoginSerializer(MissionListSerializer):
+    is_unlocked = serializers.BooleanField()
+
+    class Meta(MissionListSerializer.Meta):
+        fields = MissionListSerializer.Meta.fields + ('is_unlocked',)

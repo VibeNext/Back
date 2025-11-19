@@ -21,7 +21,7 @@ class Root(APIView):
 
         mission_service = MissionService(request)
         if request.user.is_authenticated:
-            mission_list = {'test':'인증됨! 토큰 유효함!'}
+            mission_list = mission_service.get_list_login()
         else:
             mission_list = mission_service.get_list()
 
