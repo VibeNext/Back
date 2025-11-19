@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import SolutionHistory, Message
 from missions.serializers import MissionSerializer
+from .models import SolutionHistory, Message
 
 class SolutionHistorySerializer(serializers.ModelSerializer):
     class Meta:
