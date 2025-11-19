@@ -5,7 +5,7 @@ from utils.choices import Sender
 
 class SolutionHistory(models.Model):
     id = NANOIDField(
-    primary_key=True,   
+    primary_key=True,
     editable=False,
     unique=True,
     max_length=21,
