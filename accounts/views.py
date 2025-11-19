@@ -2,8 +2,28 @@ from django.http import HttpRequest
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import LoginSerializer
-from .services import JWTService
+from .services import UserService, JWTService
+
+class Root(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        else:
+            return [IsAuthenticated()]
+
+    def post(self, request:HttpRequest, format=None):
+        user_service = UserService(request)
+        user = user_service.post()
+
+        jwt_service = JWTService()
+        data = jwt_service.post(user)
+
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data=data,
+        )
 
 class Login(APIView):
     def post(self, request:HttpRequest, format=None):
