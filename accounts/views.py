@@ -25,6 +25,15 @@ class Root(APIView):
             data=data,
         )
 
+    def get(self, request:HttpRequest, format=None):
+        user_service = UserService(request)
+        data = user_service.get()
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=data,
+        )
+
 class Login(APIView):
     def post(self, request:HttpRequest, format=None):
         serializer = LoginSerializer(data=request.data)
