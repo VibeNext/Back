@@ -1,7 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.settings import api_settings
-from utils.helpers import format_timestamp_iso
+from utils.helpers import get_instance_or_404, format_timestamp_iso
+from .serializers import UserSerializer
+
+User = get_user_model()
+
+class UserService:
+    def __init__(self, request:HttpRequest, pk:int|None=None):
+        self.request = request
+        self.instance = get_instance_or_404(User, pk=pk, error_message='사용자를 찾을 수 없어요.') if pk else None
+        self.serializer = UserSerializer(self.instance, data=request.data)
 
 class JWTService:
     def post(self, user):
