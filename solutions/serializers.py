@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import SolutionHistory, Message
-from django.urls import reverse
 from missions.serializers import MissionSerializer
 
 class SolutionHistorySerializer(serializers.ModelSerializer):
