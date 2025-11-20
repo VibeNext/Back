@@ -1,32 +1,41 @@
 from rest_framework import serializers
 from .models import SolutionHistory, Message
-from django.urls import reverse
 from missions.serializers import MissionSerializer
+
 
 class SolutionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
         fields = "__all__"
+        read_only_fields = ("id", "user", "mission", "created_at", "updated_at")
 
-class SolutionHistoryStatusUpdateSerializer(serializers.Serializer):
-    is_solved = serializers.BooleanField()
+    def create(self, validated_data):
+        request = self.context.get("request")
+        if request and not validated_data.get("user"):
+            validated_data["user"] = request.user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        
+        is_solved = validated_data.get("is_solved", instance.is_solved)
+        instance.is_solved = is_solved
+        instance.save()
+        return instance
     
+
 
 class SolutionHistoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
-        fields = ['id', 'created_at', 'is_solved', 'updated_at']
-        
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+        fields = ("id", "created_at", "is_solved", "updated_at")
 
-        return data
-    
+
 class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ['created_at', 'sender', 'content']
-    
+        fields = ("created_at", "sender", "content")
+
+
 class SolutionHistoryDetailSerializer(serializers.Serializer):
     mission = MissionSerializer()
     messages = ChatMessageSerializer(many=True)
