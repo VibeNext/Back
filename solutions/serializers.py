@@ -14,7 +14,7 @@ class SolutionHistoryStatusUpdateSerializer(serializers.Serializer):
 class SolutionHistoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
-        fields = ['id', 'created_at', 'is_solved', 'updated_at']
+        fields = ('id', 'created_at', 'is_solved', 'updated_at',)
         
     def to_representation(self, instance):
         data = super().to_representation(instance)
