@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import SolutionHistory, Message
 from missions.serializers import MissionSerializer
+from .models import SolutionHistory, Message
 
 
 class SolutionHistorySerializer(serializers.ModelSerializer):
@@ -28,7 +28,6 @@ class SolutionHistoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolutionHistory
         fields = ("id", "created_at", "is_solved", "updated_at")
-
 
 class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
