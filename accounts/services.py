@@ -20,6 +20,9 @@ class UserService:
         created_user = self.serializer.save()
         return created_user
 
+    def get(self):
+        return UserSerializer(self.request.user, context={'request':self.request}).data
+
 class JWTService:
     def post(self, user):
         refresh_token = RefreshToken.for_user(user)
