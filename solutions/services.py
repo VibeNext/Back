@@ -9,5 +9,5 @@ def validate_allowed_fields(data: dict, allowed_fields: set) -> None:
 
     if invalid_fields:
         raise ValidationError(
-            {field: ["이 필드는 수정할 수 없습니다."] for field in invalid_fields}
+            {field: "이 필드는 수정할 수 없습니다." for field in invalid_fields}
         )
