@@ -3,11 +3,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from utils.authentication import OptionalJWTAuthentication
 from .services import ChapterService, MissionService
 
 class Root(APIView):
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [OptionalJWTAuthentication]
 
     def get_permissions(self):
         if self.request.method == 'GET':
