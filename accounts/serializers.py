@@ -4,8 +4,6 @@ from rest_framework import serializers
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
-    profile_image = serializers.SerializerMethodField()
-
     class Meta:
         model = User
         fields = ('id','email','password','name','profile_image',)
@@ -18,14 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
-
-    def get_profile_image(self, obj):
-        if not obj.profile_image:
-            return None
-
-        profile_image_relative_url = obj.profile_image.url
-        request = self.context.get('request')
-        return request.build_absolute_uri(profile_image_relative_url)
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
