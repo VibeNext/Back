@@ -4,17 +4,7 @@ from .models import Chapter, Mission
 class MissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mission
-        fields = [
-            "id",
-            "chapter",
-            "title",
-            "description",
-            "image",
-            "question_text",
-            "question_image",
-            "answer_assets",
-            "ai_prompt",
-        ]
+        fields = ("id","chapter","title","question_text","question_image","answer_assets",)
 
 class ChapterListSerializer(serializers.ModelSerializer):
     class Meta:
