@@ -2,7 +2,6 @@ from django.db import models
 from django_nanoid.models import NANOIDField 
 from utils.choices import Sender
 
-# Create your models here.
 
 class SolutionHistory(models.Model):
     id = NANOIDField(
@@ -14,7 +13,7 @@ class SolutionHistory(models.Model):
     user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solution_history')
     mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solution_history')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True, auto_now=True)
     is_solved = models.BooleanField(default=False)
 
     def __str__(self):
