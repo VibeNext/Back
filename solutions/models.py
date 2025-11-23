@@ -14,7 +14,7 @@ class SolutionHistory(models.Model):
     user=models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='solution_history')
     mission=models.ForeignKey('missions.Mission', on_delete=models.CASCADE, related_name='solution_history')
     created_at = models.DateTimeField(auto_now_add=True)
-    solved_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
     is_solved = models.BooleanField(default=False)
 
     def __str__(self):
