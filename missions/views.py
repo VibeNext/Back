@@ -1,3 +1,34 @@
-from django.shortcuts import render
+from django.http import HttpRequest
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAdminUser
+from utils.authentication import OptionalJWTAuthentication
+from .services import ChapterService, MissionService
 
-# Create your views here.
+class Root(APIView):
+    authentication_classes = [OptionalJWTAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        else:
+            return [IsAdminUser()]
+
+    def get(self, request:HttpRequest, format=None):
+        chapter_service = ChapterService(request)
+        chapter_list = chapter_service.get_list()
+
+        mission_service = MissionService(request)
+        if request.user.is_authenticated:
+            mission_list = mission_service.get_list_login()
+        else:
+            mission_list = mission_service.get_list()
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                "chapter": chapter_list,
+                "mission": mission_list
+            },
+        )

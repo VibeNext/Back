@@ -28,7 +28,9 @@ hyperlink==21.0.0
 idna==3.11
 incremental==24.7.2
 msgpack==1.1.2
+gunicorn==23.0.0
 nanoid==2.0.0
+packaging==25.0
 pillow==11.3.0
 psycopg==3.2.12
 psycopg-binary==3.2.12
