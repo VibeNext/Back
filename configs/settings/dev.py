@@ -18,7 +18,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-USE_INMEMORY = os.getenv("CHANNEL_LAYER", "redis") == "memory"  # 기본 redis
+USE_INMEMORY = env("CHANNEL_LAYER", default="redis") == "memory"
 
 if USE_INMEMORY:
     CHANNEL_LAYERS = {
@@ -28,8 +28,7 @@ if USE_INMEMORY:
     }
     
 else:
-    
-    REDIS_URL = os.getenv("REDIS_URL")
+    REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",

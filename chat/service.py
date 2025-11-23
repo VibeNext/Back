@@ -48,6 +48,7 @@ def get_history(history_id: str):
     return SolutionHistory.objects.get(pk=history_id)
 
 @sync_to_async
+# 캐시 사용하는 방식으로 변경
 def load_recent_history(history_id: str, limit: int = 30):
     Message = apps.get_model("solutions", "Message")
     qs = (
