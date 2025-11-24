@@ -48,7 +48,11 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'missions.apps.MissionsConfig',
     'solutions.apps.SolutionsConfig',
+    'chat',
+    'channels'
 ]
+
+ASGI_APPLICATION = 'configs.asgi.application'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

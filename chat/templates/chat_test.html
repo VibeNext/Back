@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat WS Test</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
+    .wrap { max-width: 840px; margin: 24px auto; padding: 0 16px; }
+    .row { display: flex; gap: 8px; }
+    .col { display: flex; flex-direction: column; gap: 8px; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
+    .status { font-size: 12px; opacity: 0.7; }
+    .log { border: 1px solid #ddd; border-radius: 8px; padding: 8px; height: 420px; overflow: auto; background: #fafafa; }
+    .msg { margin: 4px 0; padding: 8px 10px; border-radius: 8px; white-space: pre-wrap; word-wrap: break-word; }
+    .msg.user { background:#e8f3ff; align-self:flex-end; }
+    .msg.ai { background:#f4f1ff; align-self:flex-start; }
+    .msg.system { background:#f0f0f0; color:#333; font-size: 12px; text-align:center; }
+    .controls { display:flex; gap:8px; margin-top: 8px; }
+    button { padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    textarea { width:100%; min-height: 60px; resize: vertical; padding:10px; border:1px solid #ddd; border-radius:8px; }
+    .thinking { font-style: italic; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h2>Chat WS Test</h2>
+      <div class="status">
+        history_id: <code id="hid">{{ history_id }}</code> |
+        ws: <span id="wsState">idle</span>
+      </div>
+    </div>
+
+    <div id="log" class="log col"></div>
+
+    <div class="controls col">
+      <div class="row">
+        <textarea id="input" placeholder="메시지를 입력하고 Enter 또는 Send"></textarea>
+      </div>
+      <div class="row">
+        <button id="btnSend">Send</button>
+        <button id="btnReconnect">Reconnect</button>
+        <button id="btnClose">Close</button>
+        <button id="btnClear">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const historyId = document.getElementById("hid").textContent.trim();
+      const wsState = document.getElementById("wsState");
+      const logEl = document.getElementById("log");
+      const inputEl = document.getElementById("input");
+      const btnSend = document.getElementById("btnSend");
+      const btnReconnect = document.getElementById("btnReconnect");
+      const btnClose = document.getElementById("btnClose");
+      const btnClear = document.getElementById("btnClear");
+
+      let socket = null;
+      let thinkingEl = null;
+
+      function wsUrl() {
+        const proto = (location.protocol === "https:") ? "wss" : "ws";
+        return `${proto}://${location.host}/ws/solutions/${historyId}/chat/`;
+      }
+
+      function setState(state) {
+        wsState.textContent = state;
+        const disabled = (state !== "open");
+        btnSend.disabled = disabled;
+      }
+
+      function append(type, text) {
+        const div = document.createElement("div");
+        div.className = `msg ${type}`;
+        div.textContent = text;
+        logEl.appendChild(div);
+        logEl.scrollTop = logEl.scrollHeight;
+        return div;
+      }
+
+      function connect() {
+        if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+          return;
+        }
+        setState("connecting");
+        socket = new WebSocket(wsUrl());
+
+        socket.onopen = () => {
+          setState("open");
+          append("system", "connected");
+          inputEl.focus();
+        };
+
+        socket.onclose = (evt) => {
+          setState("closed");
+          append("system", `closed (${evt.code})`);
+          thinkingEl = null;
+        };
+
+        socket.onerror = (e) => {
+          append("system", "error");
+        };
+
+        socket.onmessage = (evt) => {
+          console.log("WS RAW:", evt.data);
+          try {
+            const data = JSON.parse(evt.data);
+            handleMessage(data);
+          } catch (e) {
+            append("system", "invalid JSON: " + evt.data);
+          }
+        };
+      }
+
+      function handleMessage(data) {
+  // 공통적으로 message와 content 둘 다 대응
+  const text = data.message || data.content || "";
+
+  switch (data.type) {
+    case "system":
+      append("system", text);
+      break;
+
+    case "message": {
+      // AI가 최종 메시지 보낼 때 thinking 제거
+      if (thinkingEl) {
+        thinkingEl.remove();
+        thinkingEl = null;
+      }
+      const who = data.user === "ai" ? "ai" : "user";
+      append(who, text);
+      break;
+    }
+
+    case "ai_thinking": {
+      if (!thinkingEl) {
+        thinkingEl = append("system", "AI가 생각중...");
+        thinkingEl.classList.add("thinking");
+      }
+      break;
+    }
+
+    case "ai_done": {
+      if (thinkingEl) {
+        thinkingEl.remove();
+        thinkingEl = null;
+      }
+      append("system", "AI 응답 완료");
+      break;
+    }
+
+    default:
+      append("system", "unknown type: " + data.type);
+  }
+}
+
+
+      function sendMessage() {
+        if (!socket || socket.readyState !== WebSocket.OPEN) return;
+        const text = inputEl.value.trim();
+        if (!text) return;
+        socket.send(JSON.stringify({ message: text }));
+        inputEl.value = "";
+      }
+
+      // UI events
+      btnSend.addEventListener("click", sendMessage);
+      btnReconnect.addEventListener("click", () => {
+        try { socket && socket.close(); } catch(e) {}
+        setTimeout(connect, 50);
+      });
+      btnClose.addEventListener("click", () => {
+        try { socket && socket.close(1000); } catch(e) {}
+      });
+      btnClear.addEventListener("click", () => { logEl.innerHTML = ""; });
+
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // boot
+      connect();
+    })();
+  </script>
+</body>
+</html>
