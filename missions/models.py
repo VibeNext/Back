@@ -51,6 +51,7 @@ class Mission(models.Model):
     )
     image = models.URLField()
     question_text = models.TextField()
+    question_hint = models.TextField()
     question_image = models.URLField()
     answer_assets = models.JSONField(
         default=dict,
