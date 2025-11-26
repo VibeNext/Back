@@ -35,7 +35,6 @@ def get_system_instruction(history_id: str) -> str:
             ai_prompt = ai_prompt.strip()
             question_text = question_text.strip()
             answer_assets = answer_assets.strip()
-            question_hint = question_hint.strip()
 
             if ai_prompt and question_text:
                     return (
