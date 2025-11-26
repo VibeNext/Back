@@ -36,21 +36,11 @@ def get_system_instruction(history_id: str) -> str:
             question_text = question_text.strip()
             answer_assets = answer_assets.strip()
 
-            if ai_prompt and question_text:
-                    return (
+            return (
                 f"{ai_prompt}\n\n" 
                 f"question_text: {question_text}\n" 
                 f"question_hint: {question_hint}\n"
                 f"answer_assets: {answer_assets}"
-                )
-
-            if ai_prompt:
-                return ai_prompt
-
-            if question_text:
-                return (
-                    "You are a helpful assistant for this app.\n\n"
-                    f"question_text: {question_text}"
                 )
 
     except SolutionHistory.DoesNotExist:
