@@ -114,7 +114,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if error_text and not full:
                 full = error_text
             if not full:
-                # 모델이 빈값 준 경우에도 사용자 화면엔 뭔가 보이게
                 full = "[AI returned empty response]"
 
             # AI 최종 메시지 전송
