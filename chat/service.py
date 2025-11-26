@@ -51,8 +51,7 @@ def get_system_instruction(history_id: str) -> str:
             if question_text:
                 return (
                     "You are a helpful assistant for this app.\n\n"
-                    "문제 내용은 다음과 같습니다.\n"
-                    f"{question_text}"
+                    f"question_text: {question_text}"
                 )
 
     except SolutionHistory.DoesNotExist:
