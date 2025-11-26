@@ -80,10 +80,13 @@
     "answer_assets": {
       "key_a_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_can_open_door.png",
       "key_a_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_cannot_open_door.png",
+      "key_a_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_unknown.png",
       "key_b_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_can_open_door.png",
       "key_b_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_cannot_open_door.png",
+      "key_b_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_unknown.png",
       "key_c_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_can_open_door.png",
-      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png"
+      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png",
+      "key_c_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_unknown.png"
     },
     "ai_prompt": ""
   },
@@ -99,10 +102,13 @@
     "answer_assets": {
       "key_a_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_can_open_door.png",
       "key_a_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_cannot_open_door.png",
+      "key_a_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_unknown.png",
       "key_b_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_can_open_door.png",
       "key_b_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_cannot_open_door.png",
+      "key_b_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_unknown.png",
       "key_c_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_can_open_door.png",
-      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png"
+      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png",
+      "key_c_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_unknown.png"
     },
     "ai_prompt": ""
   },
@@ -118,10 +124,13 @@
     "answer_assets": {
       "key_a_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_can_open_door.png",
       "key_a_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_cannot_open_door.png",
+      "key_a_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_a_unknown.png",
       "key_b_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_can_open_door.png",
       "key_b_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_cannot_open_door.png",
+      "key_b_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_b_unknown.png",
       "key_c_can_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_can_open_door.png",
-      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png"
+      "key_c_cannot_open_door": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_cannot_open_door.png",
+      "key_c_unknown": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/key_c_unknown.png"
     },
     "ai_prompt": ""
   },
