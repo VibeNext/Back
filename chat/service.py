@@ -29,8 +29,8 @@ def get_system_instruction(history_id: str) -> str:
         if mission is not None:
             ai_prompt = getattr(mission, "ai_prompt", "") or ""
             question_text = getattr(mission, "question_text", "") or ""
-            answer_assets = getattr(mission, "answer_assets", "") or ""
             question_hint = getattr(mission, "question_hint", "") or ""
+            answer_assets = getattr(mission, "answer_assets", "") or ""
 
             ai_prompt = ai_prompt.strip()
             question_text = question_text.strip()
