@@ -29,25 +29,18 @@ def get_system_instruction(history_id: str) -> str:
         if mission is not None:
             ai_prompt = getattr(mission, "ai_prompt", "") or ""
             question_text = getattr(mission, "question_text", "") or ""
+            question_hint = getattr(mission, "question_hint", "") or ""
+            answer_assets = getattr(mission, "answer_assets", "") or ""
 
             ai_prompt = ai_prompt.strip()
             question_text = question_text.strip()
+            answer_assets = answer_assets.strip()
 
-            if ai_prompt and question_text:
-                return (
-                    f"{ai_prompt}\n\n"
-                    f"문제 내용은 다음과 같습니다.\n"
-                    f"{question_text}"
-                )
-
-            if ai_prompt:
-                return ai_prompt
-
-            if question_text:
-                return (
-                    "You are a helpful assistant for this app.\n\n"
-                    "문제 내용은 다음과 같습니다.\n"
-                    f"{question_text}"
+            return (
+                f"{ai_prompt}\n\n" 
+                f"question_text: {question_text}\n" 
+                f"question_hint: {question_hint}\n"
+                f"answer_assets: {answer_assets}"
                 )
 
     except SolutionHistory.DoesNotExist:
