@@ -3,7 +3,7 @@
     "id": 11,
     "chapter": 1,
     "title": "토마토 스프",
-    "description": "[개념 학습] 섞어진 조리 방법을 순차적으로 구성해 레시피를 작성해요.",
+    "description": "[개념 학습] 섞인 조리 방법을 순차적으로 구성해 레시피를 작성해요.",
     "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/image/11.png",
     "question_text": "오늘은 내가 요리사!\n갓 따온 토마토를 이용해서 맛있는 토마토 스프를 만들려고 해요.\n아래에 섞여 있는 조리 단계를 참고해서 올바른 레시피를 작성해 주세요.\n모든 과정을 순서대로 실행하면, 따뜻하고 맛있는 토마토 스프가 완성될 거예요!",
     "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/question_image/11.png",
@@ -26,7 +26,7 @@
     "title": "버섯 스프",
     "description": "[개념 검토] 제시된 조리 방법에서 잘못된 부분을 찾아내고 수정해요.",
     "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/image/12.png",
-    "question_text": "오늘은 친구가 요리사!\n당신의 토마토 스프에 감동받은 친구가 버섯 스프를 만들어주려고 해요.\n앗, 하지만 아쉽게도 친구의 요리는 실패하고 말았어요. 어디가 잘못된 걸까요?\n친구의 버섯 스프 레시피를 보고, 잘못된 레시피와 그 이유를 찾아주세요!",
+    "question_text": "오늘은 친구가 요리사!\n당신의 토마토 스프에 감동한 친구가 버섯 스프를 만들어주려고 해요.\n앗, 하지만 아쉽게도 친구의 요리는 실패하고 말았어요. 어디가 잘못된 걸까요?\n친구의 버섯 스프 레시피를 보고, 잘못된 레시피와 그 이유를 찾아주세요!",
     "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/question_image/12.png",
     "answer_assets": {
       "add_water": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/add_water.png",
@@ -47,7 +47,7 @@
     "title": "손님의 스프",
     "description": "[개념 확장] 순차 개념을 응용해 자율적으로 레시피를 구성해요.",
     "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/image/13.png",
-    "question_text": "프로 요리사가 되기 위한 마지막 단계!\n바로 다른 사람들의 주문에 맞춰 요리를 만들어보는 것이에요.\n아래 곰 손님은 “꿀이 들어가고, 허브가 뿌려진 스프” 를 원하고 있어요.\n지금까지 배운 순차 개념과 레시피들을 응용해서 손님께 드릴 맛있는 스프를 만들어볼까요?\n* 스프에 요리사가 원하는 다양한 재료를 추가하면 더 맛있는 스프가 완성될거에요!",
+    "question_text": "프로 요리사가 되기 위한 마지막 단계!\n바로 다른 사람들의 주문에 맞춰 요리를 만들어보는 것이에요.\n아래 곰 손님은 “꿀이 들어가고, 허브가 뿌려진 스프” 를 원하고 있어요.\n지금까지 배운 순차 개념과 레시피들을 전부 활용해서 손님께 드릴 맛있는 스프를 만들어볼까요?\n* 스프에 요리사가 원하는 다양한 재료를 추가하면 더 맛있는 스프가 완성될거에요!",
     "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/question_image/13.png",
     "answer_assets": {
       "add_water": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/answer_assets/add_water.png",
@@ -85,8 +85,8 @@
   {
     "id": 22,
     "chapter": 2,
-    "title": "고장난 잠금장치",
-    "description": "[개념 검토] 고장난 잠금장치에서 잘못된 부분을 찾아내고 수정해요.",
+    "title": "고장 난 잠금장치",
+    "description": "[개념 검토] 고장 난 잠금장치에서 잘못된 부분을 찾아내고 수정해요.",
     "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/image/22.png",
     "question_text": "앗! 잠시 자리를 비운 사이, 누군가가 잠금장치를 망가뜨렸어요!\n방해꾼이 잠금장치를 엉망으로 만들어버린 바람에, 문이 이상하게 작동하기 시작했어요.\n아래 그림을 보고, 잠금장치에서 무엇이 잘못되었는지 설명해주세요.\n그 후 잠금장치가 올바르게 작동하도록 새로운 조건문을 직접 작성해봅시다!",
     "question_image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/question_image/22.png",
@@ -103,7 +103,7 @@
   {
     "id": 23,
     "chapter": 2,
-    "title": "이중잠금",
+    "title": "이중 잠금",
     "description": "[개념 확장] 조건 개념을 응용해 새로운 잠금장치를 만들어요.",
     "image": "https://nextvibe.s3.ap-northeast-2.amazonaws.com/mission/image/23.png",
     "question_text": "건축가로서 능력을 인정받은 당신!\n이번에는 은행에서 새로운 잠금장치를 의뢰했어요.\n보다 뛰어난 보안을 위해, 이전보다 복잡한 규칙으로 문이 열리도록 만들어야 해요.\n아래 그림을 보고, 새로운 잠금장치에 맞는 조건문을 직접 작성해보세요!",
