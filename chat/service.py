@@ -40,8 +40,8 @@ def get_system_instruction(history_id: str) -> str:
                     return (
                 f"{ai_prompt}\n\n" 
                 f"question_text: {question_text}\n" 
-                f"answer_assets: {answer_assets}\n"
-                f"question_hint: {question_hint}"
+                f"question_hint: {question_hint}\n"
+                f"answer_assets: {answer_assets}"
                 )
 
             if ai_prompt:
