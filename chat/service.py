@@ -30,18 +30,27 @@ def get_system_instruction(history_id: str) -> str:
             ai_prompt = getattr(mission, "ai_prompt", "") or ""
             question_text = getattr(mission, "question_text", "") or ""
             question_hint = getattr(mission, "question_hint", "") or ""
-            answer_assets = getattr(mission, "answer_assets", "") or ""
-
+            answer_assets = getattr(mission, "answer_assets", None)
+        
             ai_prompt = ai_prompt.strip()
             question_text = question_text.strip()
-            answer_assets = answer_assets.strip()
-
+            question_hint = question_hint.strip() if isinstance(question_hint, str) else ""
+        
+            # answer_assets 처리
+            if isinstance(answer_assets, str):
+                answer_assets_text = answer_assets.strip()
+            elif isinstance(answer_assets, dict):
+                # JSON 형태를 문자열로 변환
+                answer_assets_text = json.dumps(answer_assets, ensure_ascii=False, indent=2)
+            else:
+                answer_assets_text = ""
+        
             return (
-                f"{ai_prompt}\n\n" 
-                f"question_text: {question_text}\n" 
+                f"{ai_prompt}\n\n"
+                f"question_text: {question_text}\n"
                 f"question_hint: {question_hint}\n"
-                f"answer_assets: {answer_assets}"
-                )
+                f"answer_assets:\n{answer_assets_text}"
+            )
 
     except SolutionHistory.DoesNotExist:
         pass
