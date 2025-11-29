@@ -42,14 +42,57 @@ backend/
 │   ├── settings/                  # Django 설정 관리
 │   │   ├── __init__.py            # 어떤 환경인지 파악하고 어떤 설정을 적용할지 결정
 │   │   ├── base.py                # 공통 Django 설정
-│   │   ├── development.py         # 개발환경 Django 설정
-│   │   └── production.py          # 배포환경 Django 설정
-│   ├── __init__.py                # 이 폴더가 패키지임을 표시
+│   │   ├── dev.py                 # 개발환경 Django 설정
+│   │   └── prod.py                # 배포환경 Django 설정
 │   ├── asgi.py                    # ASGI 설정
+│   ├── routing.py                 # 웹소켓 라우팅 설정
 │   ├── urls.py                    # URL 설정
 │   └── wsgi.py                    # WSGI 설정
 │
-├── <앱>/                          # Django App
+├── accounts/                      # Django App
+│   ├── migrations/                # 데이터베이스 마이그레이션
+│   ├── __init__.py                # 이 폴더가 패키지임을 표시
+│   ├── admin.py                   # Admin 사이트 설정
+│   ├── apps.py                    # App 설정
+│   ├── forms.py                   # Form 정의
+│   ├── managers.py                # Manager 정의
+│   ├── models.py                  # Model 정의
+│   ├── serializers.py             # Serializer 정의
+│   ├── services.py                # 비즈니스 로직
+│   ├── tests.py                   # 테스트 코드
+│   ├── urls.py                    # App URL 설정
+│   └── views.py                   # View 정의
+│
+├── chat/                          # Django App
+│   ├── ai/                        #
+│   │   └── genhelper.py           # 
+│   ├── migrations/                # 데이터베이스 마이그레이션
+│   ├── __init__.py                # 이 폴더가 패키지임을 표시
+│   ├── admin.py                   # Admin 사이트 설정
+│   ├── apps.py                    # App 설정
+│   ├── consumer.py                # 
+│   ├── models.py                  # Model 정의
+│   ├── routing.py                 # 
+│   ├── services.py                # 비즈니스 로직
+│   ├── tests.py                   # 테스트 코드
+│   └── views.py                   # View 정의
+│
+├── missions/                      # Django App
+│   ├── datas/                     # 기획자가 설계한 학습단계 등의 데이터
+│   ├── management/commands        # 커스텀 커맨드
+│   │   └── insertdata             # missions/datas의 데이터를 DB에 삽입하는 커맨드
+│   ├── migrations/                # 데이터베이스 마이그레이션
+│   ├── __init__.py                # 이 폴더가 패키지임을 표시
+│   ├── admin.py                   # Admin 사이트 설정
+│   ├── apps.py                    # App 설정
+│   ├── models.py                  # Model 정의
+│   ├── serializers.py             # Serializer 정의
+│   ├── services.py                # 비즈니스 로직
+│   ├── tests.py                   # 테스트 코드
+│   ├── urls.py                    # App URL 설정
+│   └── views.py                   # View 정의
+│
+├── solutions/                     # Django App
 │   ├── migrations/                # 데이터베이스 마이그레이션
 │   ├── __init__.py                # 이 폴더가 패키지임을 표시
 │   ├── admin.py                   # Admin 사이트 설정
@@ -66,6 +109,7 @@ backend/
 │   │   ├── service.py             # 서비스 전용 데코레이터
 │   │   └── view.py                # 뷰 전용 데코레이터
 │   ├── __init__.py                # 이 폴더가 패키지임을 표시
+│   ├── authentication.py          # 커스텀 Authentication Class
 │   ├── choices.py                 # 커스텀 Choices
 │   ├── constants.py               # 상수
 │   ├── helpers.py                 # 공통 헬퍼 함수
@@ -73,11 +117,11 @@ backend/
 │
 ├── env_example/                   # 환경변수 목록
 │   ├── .env.base                  # 공통 환경변수
-│   ├── .env.development           # 개발환경 환경변수
-│   └── .env.production            # 배포환경 환경변수
+│   ├── .env.dev                   # 개발환경 환경변수
+│   └── .env.prod                  # 배포환경 환경변수
 │
 ├── .gitignore                     # Git 제외 설정
+├── README.md                      # 리드미
 ├── manage.py                      # 명령어 실행 도구
-├── README.md                      # 레포지토리 리드미
 └── requirements.txt               # 의존성 목록
 ```
