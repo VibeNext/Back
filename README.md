@@ -64,15 +64,15 @@ backend/
 │   └── views.py                   # View 정의
 │
 ├── chat/                          # Django App
-│   ├── ai/                        #
-│   │   └── genhelper.py           # 
+│   ├── ai/                        # ai 관련 설정 관리
+│   │   └── genhelper.py           # Gemini Live API 연결 헬퍼
 │   ├── migrations/                # 데이터베이스 마이그레이션
 │   ├── __init__.py                # 이 폴더가 패키지임을 표시
 │   ├── admin.py                   # Admin 사이트 설정
 │   ├── apps.py                    # App 설정
-│   ├── consumer.py                # 
+│   ├── consumer.py                # 메시지 송수신 로직
 │   ├── models.py                  # Model 정의
-│   ├── routing.py                 # 
+│   ├── routing.py                 # 웹소켓 라우팅 URL 설정
 │   ├── services.py                # 비즈니스 로직
 │   ├── tests.py                   # 테스트 코드
 │   └── views.py                   # View 정의
